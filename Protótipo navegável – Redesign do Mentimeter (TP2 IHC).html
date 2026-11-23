@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Protótipo navegável – Redesign do Mentimeter (TP2 IHC)</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#efeee9;--pg:#e4e3dd;--card:#fff;--ink:#1d1c1a;--mu:#5d5b55;--ac:#4f6be0;--acs:#e3e8fb;--dk:#2b2a27;--ok:#1f7a45;--oks:#d6efdf;--bad:#b3342f;--bads:#fbdedc;--ln:#d9d7cf;--pk:#f9726f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171614;--pg:#0f0f0e;--card:#232220;--ink:#f1efe9;--mu:#b4b1a7;--ac:#93a6ff;--acs:#2a3052;--dk:#f1efe9;--ok:#7fdca0;--oks:#1b3a29;--bad:#ff9d96;--bads:#43211f;--ln:#3b3a36;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171614;--pg:#0f0f0e;--card:#232220;--ink:#f1efe9;--mu:#b4b1a7;--ac:#93a6ff;--acs:#2a3052;--dk:#f1efe9;--ok:#7fdca0;--oks:#1b3a29;--bad:#ff9d96;--bads:#43211f;--ln:#3b3a36;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--pg);color:var(--ink);font:400 16px/1.45 Outfit,system-ui,sans-serif}
+header,main{max-width:1160px;margin:auto;padding:0 20px}
+header{padding-top:16px;padding-bottom:8px}
+h1{font:600 1.2rem Outfit,system-ui,sans-serif;margin:0 0 4px}
+header p{margin:0 0 10px;color:var(--mu);font-size:.9rem;max-width:72ch}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav button{border:1px solid var(--ln);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 12px;font:inherit;font-size:.82rem;cursor:pointer}
+nav button[aria-current=true]{background:var(--dk);color:var(--card);border-color:var(--dk)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:18px;padding-top:12px;padding-bottom:32px}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+aside{background:var(--card);border:1px solid var(--ln);border-radius:18px;padding:16px;align-self:start;font-size:.9rem}
+aside h2{font:600 1rem Outfit,system-ui,sans-serif;margin:0}
+aside .sc{color:var(--ac);font-weight:600;margin:0 0 6px}
+aside ul{padding-left:18px;margin:6px 0}aside li{margin-bottom:6px}
+.s{display:none}.s.on{display:block}
+.app{background:var(--bg);border:1px solid var(--ln);border-radius:20px;overflow:hidden;min-height:480px;display:flex;flex-direction:column}
+.ph{max-width:340px;margin:auto;background:var(--card);border:2px solid var(--ln);border-radius:30px;padding:20px 18px;min-height:540px}
+.lg{width:22px;height:22px;vertical-align:-5px;margin-right:5px;color:var(--ink)}
+.wm{font-weight:600;font-size:1.2rem}
+.top{display:flex;align-items:center;gap:8px;padding:10px 14px;flex-wrap:wrap}
+.sp{flex:1}
+.home{display:grid;grid-template-columns:170px 1fr;flex:1}
+.side{padding:14px;display:flex;flex-direction:column;gap:4px;font-size:.92rem}
+.side span{padding:6px 8px;border-radius:8px}.side .a{background:var(--card);font-weight:600}
+.mn{padding:22px}
+@media(max-width:700px){.home{grid-template-columns:1fr}.side{display:none}}
+.hl{font:300 1.8rem/1.2 Outfit,system-ui,sans-serif;text-align:center;margin:10px 0 18px}
+.cd{background:var(--card);border-radius:18px;padding:16px;border:1px solid var(--ln)}
+.pb{font:600 .9rem Outfit,system-ui,sans-serif;border:0;border-radius:99px;padding:11px 18px;min-height:46px;cursor:pointer;background:var(--pg);color:var(--ink)}
+.pb.bl{background:var(--ac);color:var(--card)}.pb.dk{background:var(--dk);color:var(--card)}.pb:disabled{opacity:.55;cursor:not-allowed}
+.pb.sm{min-height:34px;padding:6px 12px;font-size:.82rem}
+.ol{width:100%;text-align:left;margin-top:10px;border:1.5px solid var(--ln);border-radius:28px;background:var(--card);color:var(--ink);font:400 1rem Outfit,system-ui,sans-serif;min-height:52px;padding:12px 18px;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+input[type=text],select{font:inherit;width:100%;min-height:46px;padding:10px 14px;border:1.5px solid var(--ln);border-radius:14px;background:var(--card);color:var(--ink)}
+.tag{display:inline-block;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--acs);color:var(--ac);vertical-align:middle}
+.tag.ok{background:var(--oks);color:var(--ok)}.tag.no{background:var(--bads);color:var(--bad)}
+.mu{color:var(--mu);font-size:.88rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.pop{background:var(--card);border-radius:20px;padding:12px;max-width:580px;margin:12px auto;box-shadow:0 8px 28px #0002}
+.pop h4{margin:10px 8px 2px;color:var(--mu);font-weight:400;font-size:.85rem}
+.it{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;color:var(--ink);font:inherit;padding:10px 8px;border-radius:12px;cursor:pointer}
+.it:hover{background:var(--bg)}.it i{flex:0 0 34px;height:34px;border-radius:9px}
+.ed{display:grid;grid-template-columns:70px 1fr 200px;gap:12px;padding:0 14px 14px;flex:1}
+@media(max-width:760px){.ed{grid-template-columns:1fr}.th{display:none}}
+.th div{height:50px;background:var(--card);border-radius:8px;margin-bottom:8px;border:2px solid var(--ln);font-size:.75rem;padding:4px}.th .a{border-color:var(--ac)}
+.sl{background:var(--card);border-radius:16px;padding:18px;min-height:340px;display:flex;flex-direction:column}
+.q{font:300 1.7rem/1.2 Outfit,system-ui,sans-serif;border:0;background:none;color:var(--ink);width:100%;padding:0;margin:12px 0 auto}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.cols input{min-height:36px;padding:6px 8px;border-radius:8px;font-size:.9rem}
+.bar{height:6px;border-radius:3px;background:var(--pk);margin:6px 0;opacity:.5}.bar.g{background:var(--ac);opacity:1}
+.rp{background:var(--card);border-radius:16px;padding:12px;font-size:.88rem;align-self:start}
+.tb{display:inline-flex;background:var(--pg);border-radius:99px;padding:3px}
+.tb button{border:0;background:none;color:var(--ink);font:600 .85rem Outfit,system-ui,sans-serif;padding:7px 14px;border-radius:99px;cursor:pointer}.tb .a{background:var(--card)}
+.r{display:flex;align-items:center;gap:10px;justify-content:space-between;background:var(--card);border-radius:14px;padding:14px 16px;margin-top:8px}
+.r b{font:300 2rem/1 Outfit,system-ui,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{padding:9px 6px;text-align:left;border-bottom:1px solid var(--ln)}
+.tm{height:10px;background:var(--acs);border-radius:99px;overflow:hidden}.tm i{display:block;height:100%;width:60%;background:var(--ac)}
+.av{width:30px;height:30px;border-radius:50%;background:#f9b8b6;color:#1d1c1a;display:inline-grid;place-items:center;font-weight:600;font-size:.8rem}
+.spin{width:40px;height:40px;border:5px solid var(--acs);border-top-color:var(--ac);border-radius:50%;margin:14px auto;animation:g 1s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}}
+.mod{display:grid;grid-template-columns:140px 1fr;background:var(--card);border-radius:20px;overflow:hidden;max-width:580px;margin:16px auto;box-shadow:0 8px 28px #0003}
+.mv{background:var(--oks);display:grid;place-items:center;color:var(--ok)}.mod .bd{padding:18px}
+@media(max-width:560px){.mod{grid-template-columns:1fr}.mv{display:none}}
+.rd{display:flex;align-items:center;gap:8px;font-weight:400;margin:8px 0}.rd input{width:20px;height:20px}
+.c{text-align:center}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="m" viewBox="0 0 24 24"><path fill="#4f6be0" d="M2 22V9h7v13z"/><path fill="#f9726f" d="M10 22v-7a7 7 0 0 1 7 7z"/><path fill="currentColor" d="M13 2h7v11h-7z"/></symbol></svg>
+<header>
+<h1>Redesign do Mentimeter – protótipo navegável</h1>
+<p>Clique nos botões dentro da tela. O painel ao lado indica o cenário, a persona e o que muda em relação ao Mentimeter atual (problemas do TP1). Os atalhos abaixo saltam entre as telas.</p>
+<nav id="nav" aria-label="Telas do protótipo"></nav>
+</header>
+<main>
+<div id="stage">
+
+<section class="s" id="s11" data-sc="Cenário 1 · Helena e Fernando" data-t="Tela inicial: criar quiz" data-n="Substitui o início confuso com chat de IA: botão “Criar quiz em branco” e campo “Título do quiz” visíveis desde o começo.|A IA vira opção secundária, sem bloquear a criação.|Quem se beneficia: Fernando (monitor) e Helena.">
+<div class="app home"><div class="side"><div><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span></div><button class="pb dk" style="margin:8px 0">Novo Menti +</button><span class="a">Página inicial</span><span>Recentes</span><span>Meus Mentis</span><span>Compartilhado comigo</span></div>
+<div class="mn"><h3 class="hl">Bem-vinda de volta, Helena</h3><div class="cd"><label for="t1" style="margin-top:0">Título do quiz</label><input type="text" id="t1" value="Revisão de Física – Cinemática">
+<div class="row"><button class="pb bl" data-go="s12">Criar quiz em branco</button><button class="pb">Criar com ajuda de IA (opcional)</button></div>
+<p class="mu">Quiz com nome dos alunos, votação anônima ou formulário: você escolhe o tipo no próximo passo.</p></div></div></div>
+</section>
+
+<section class="s" id="s12" data-sc="Cenário 1 · Helena e Fernando" data-t="Escolher o tipo de pergunta" data-n="Cada tipo tem descrição curta; a etiqueta “Identifica participantes por nome” resolve o problema de Helena.|“Verdadeiro ou falso” aparece na lista, com exemplo curto.|A troca de tipo mantém o conteúdo já digitado.">
+<div class="app"><div class="top"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span><span class="sp"></span><b>Novo slide</b></div>
+<div class="pop"><h4>Competições de questionários (mostram o nome dos participantes)</h4>
+<button class="it" data-go="s13"><i style="background:var(--ac)"></i><span><b>Quiz com nome</b> <span class="tag ok">Identifica participantes por nome</span><br><span class="mu">Os alunos entram com o nome; valem pontos e ranking.</span></span></button>
+<button class="it" data-go="s13"><i style="background:#3b9d6a"></i><span><b>Verdadeiro ou falso</b><br><span class="mu">Exemplo: “if (x &gt; 0) executa quando x é positivo.” Verdadeiro / Falso.</span></span></button>
+<h4>Perguntas interativas (anônimas)</h4>
+<button class="it"><i style="background:var(--pk)"></i><span><b>Múltipla escolha</b> <span class="tag">Anônimo</span><br><span class="mu">Votação rápida, sem nomes.</span></span></button>
+<button class="it"><i style="background:#e8b02f"></i><span><b>Nuvem de palavras</b> <span class="tag">Anônimo</span></span></button>
+<p class="mu" style="margin:8px">Você pode trocar o tipo depois sem perder o texto.</p></div></div>
+</section>
+
+<section class="s" id="s13" data-sc="Cenário 1 · Helena e Fernando" data-t="Editor da pergunta" data-n="Enunciado, alternativas, resposta correta e imagem na mesma tela.|Rótulo textual “Resposta correta”, não só um ícone pequeno.|Galeria com “Gratuita” e “Paga”; o recurso pago aparece desativado.|Indicador visível de salvamento automático.|“Trocar tipo” mantém o texto digitado e “+ Novo” abre a lista de tipos para a próxima pergunta.">
+<div class="app"><div class="top"><button class="pb sm" aria-label="Voltar">←</button><b>Revisão de Física – Cinemática</b><span class="tag ok">Salvo automaticamente às 14:02</span><span class="sp"></span><span class="tb"><button class="a">Criar</button><button>Resultados</button></span><span class="sp"></span><span class="av">HP</span><button class="pb sm">Pré-visualizar</button><button class="pb sm bl" data-go="s21">Iniciar apresentação</button></div>
+<div class="ed"><div class="th"><div class="a">1</div><div>2</div><button class="pb sm" data-go="s12" aria-label="Novo slide" style="width:100%;padding:6px 0">+ Novo</button></div>
+<div class="sl"><div style="text-align:right"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span></div>
+<input class="q" type="text" aria-label="Enunciado" value="Qual é a unidade de velocidade no SI?">
+<div class="cols"><div><span class="tag ok">✓ Resposta correta</span><div class="bar g"></div><input type="text" aria-label="Alternativa A" value="m/s"></div>
+<div><button class="pb sm">Marcar como correta</button><div class="bar"></div><input type="text" aria-label="Alternativa B" value="km/h"></div>
+<div><button class="pb sm">Marcar como correta</button><div class="bar"></div><input type="text" aria-label="Alternativa C" value="N"></div></div></div>
+<div class="rp"><b>Tipo</b><br>Quiz com nome<br><span class="tag ok">Identifica participantes por nome</span><br><button class="pb sm" data-go="s12" style="margin-top:6px">Trocar tipo</button>
+<p><b>Imagem</b></p><div class="row" style="margin:0"><button class="pb sm">Foto de pista</button><span class="tag ok">Gratuita</span></div>
+<div class="row"><button class="pb sm" disabled>Foto de radar</button><span class="tag no">Paga</span></div><p><b>Tempo</b><br>25 segundos</p></div></div></div>
+</section>
+
+<section class="s" id="s21" data-sc="Cenário 2 · Camila e Marina" data-t="Entrar na sessão (celular)" data-n="O campo de nome é sempre exibido (corrige o bloqueio no lobby).|Se falhar: mensagem clara e botão “Tentar de novo”, sem reiniciar o navegador.|Código também como link e texto lido por leitor de tela (Marina).|Sem pedido de conta: quem recusa não é cobrado de novo.">
+<div class="ph"><div class="c"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span></div>
+<h3 class="c" style="font-weight:300;font-size:1.5rem;margin:18px 0 4px">Entrar na sessão</h3>
+<label for="c1">Código da sessão</label><input id="c1" type="text" inputmode="numeric" value="5847 3564">
+<label for="nm">Seu nome</label><input id="nm" type="text" value="Camila">
+<button class="pb bl" data-go="s22" style="width:100%;margin-top:16px">Entrar</button>
+<p class="mu c">Sem o código? Abra o link menti.com/entrar</p><p class="mu c">Algo deu errado? <button class="pb sm">Tentar de novo</button></p></div>
+</section>
+
+<section class="s" id="s22" data-sc="Cenário 2 · Camila e Marina" data-t="Aguardando o apresentador" data-n="Mensagem visual de status com indicador de atividade: Camila sabe que está tudo certo sem perguntar.|Textos em português simples, com ícone de apoio.|Animação reduzida se o aparelho pedir.">
+<div class="ph c"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span>
+<div class="av" style="width:84px;height:84px;font-size:2rem;margin:22px auto 10px;display:grid">C</div>
+<h3 style="margin:0">Aguardando o apresentador</h3><div class="spin" role="img" aria-label="Aguardando"></div>
+<p>Você entrou como <b>Camila</b>. Está tudo certo.</p>
+<button class="pb bl" data-go="s23" style="width:100%;margin-top:14px">(Demonstração) Apresentador libera a pergunta</button></div>
+</section>
+
+<section class="s" id="s23" data-sc="Cenário 2 · Camila e Marina" data-t="Responder à pergunta" data-n="Vídeo da pergunta aparece no celular, com legenda e transcrição (Camila).|Tempo com barra, número de segundos, vibração e sinal visual; botão “Mais tempo” (Marina).|Botões grandes (mín. 48 px).">
+<div class="ph"><div class="c"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span></div>
+<p class="mu" style="margin:10px 0 4px">Pergunta 1 de 3</p>
+<div style="border:2px dashed var(--ln);border-radius:14px;padding:12px;text-align:center" class="mu">▶ Vídeo da pergunta<br><b style="color:var(--ink)">Legenda: “Observe a cor do céu ao meio-dia.”</b><br><button class="pb sm" style="margin-top:6px">Ver transcrição</button></div>
+<h3 style="font-weight:300;font-size:1.4rem;margin:12px 0 8px">Qual é a cor do céu?</h3>
+<div class="tm" role="progressbar" aria-valuenow="15" aria-valuemax="25" aria-label="Tempo restante"><i></i></div>
+<div class="row" style="justify-content:space-between;margin-top:4px"><span class="mu">15 s restantes · vibra aos 5 s</span><button class="pb sm">Mais tempo +15 s</button></div>
+<button class="ol" data-go="s24">Azul</button><button class="ol">Branco</button><button class="ol">Verde</button></div>
+</section>
+
+<section class="s" id="s24" data-sc="Cenário 2 · Camila e Marina" data-t="Confirmação do envio" data-n="Confirmação fiel ao estado real: acabou a mensagem falsa “você não respondeu a tempo”.|Feedback no próprio celular, sem depender do apresentador.">
+<div class="ph c"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span>
+<p style="margin-top:50px"><span class="tag ok">✓ Enviada a tempo</span></p>
+<h3 style="font-weight:300;font-size:1.5rem;margin:6px 0">Resposta enviada e contabilizada</h3><p>Você respondeu <b>Azul</b> em 9 s.</p>
+<button class="pb bl" data-go="s25" style="width:100%;margin-top:20px">Ver resultados</button></div>
+</section>
+
+<section class="s" id="s25" data-sc="Cenário 2 · Camila e Marina" data-t="Resultados no celular" data-n="Visão própria para celular (não a tela do computador em miniatura).|Tabela legível e resumo em texto como alternativa ao gráfico (Marina).|Certo/errado com palavra e ícone, não só cor.">
+<div class="ph"><div class="c"><svg class="lg"><use href="#m"/></svg><span class="wm">Menti</span></div>
+<h3 style="font-weight:300;font-size:1.4rem;margin:14px 0 4px">Resultado da pergunta 1</h3><p>Azul foi a mais votada: 1 de 1 voto.</p>
+<table><tr><th>Opção</th><th>Votos</th><th>Situação</th></tr>
+<tr><td>Azul</td><td>1 (100%)</td><td><span class="tag ok">✓ Correta</span></td></tr>
+<tr><td>Branco</td><td>0</td><td><span class="tag no">✗ Errada</span></td></tr>
+<tr><td>Verde</td><td>0</td><td><span class="tag no">✗ Errada</span></td></tr></table>
+<p class="mu">Sua resposta: Azul (correta).</p><button class="pb" data-go="s31" style="width:100%">Ver visão da professora (cenário 3)</button></div>
+</section>
+
+<section class="s" id="s31" data-sc="Cenário 3 · Helena" data-t="Resumo dos resultados" data-n="Resumo em texto além dos números e do gráfico.|Atalhos claros para Participantes e Exportar.|Exportar visível, sem depender de um ícone solto.">
+<div class="app"><div class="top"><button class="pb sm" aria-label="Voltar">←</button><b>Revisão de Física – Cinemática</b><span class="sp"></span><span class="tb"><button class="a">Resumo</button><button data-go="s32">Participantes</button></span><span class="sp"></span><button class="pb sm dk" data-go="s33">↓ Exportar relatório</button></div>
+<div class="mn"><h3 class="hl" style="text-align:left;font-size:1.5rem">Resumo da sessão</h3><p>O engajamento foi de <b>48%</b>, abaixo da média. 43% das respostas do quiz estavam corretas.</p>
+<div class="r"><span>Engajamento</span><b>48%</b><span class="tag no">Abaixo da média</span></div>
+<div class="r"><span>Respostas corretas</span><b>43%</b><span class="tag">3 jogadores</span></div>
+<div class="r"><span>Perguntas do público</span><b>2</b><span></span></div></div></div>
+</section>
+
+<section class="s" id="s32" data-sc="Cenário 3 · Helena" data-t="Participantes, filtro e paleta" data-n="Tabela por participante, sem sobreposição de número e nome.|Filtro por situação (todos, acertaram, não responderam).|Seletor de paleta (padrão, daltonismo, alto contraste); certo/errado sempre com texto e ícone.|Paleta para daltonismo é hipótese de design, a validar com usuários.">
+<div class="app"><div class="top"><button class="pb sm" aria-label="Voltar" data-go="s31">←</button><b>Revisão de Física – Cinemática</b><span class="sp"></span><span class="tb"><button data-go="s31">Resumo</button><button class="a">Participantes</button></span><span class="sp"></span><button class="pb sm dk" data-go="s33">↓ Exportar relatório</button></div>
+<div class="mn"><div class="row" style="margin:0"><div style="flex:1;min-width:150px"><label for="f" style="margin-top:0">Filtrar</label><select id="f"><option>Todos</option><option>Acertaram</option><option>Não responderam</option></select></div><div style="flex:1;min-width:150px"><label for="pl" style="margin-top:0">Paleta de cores</label><select id="pl"><option>Padrão</option><option>Para daltonismo</option><option>Alto contraste</option></select></div></div>
+<div class="cd" style="margin-top:12px"><table><tr><th>Participante</th><th>Engajamento</th><th>Pergunta 1</th></tr>
+<tr><td>Participante 1</td><td>56%</td><td><span class="tag ok">✓ Correta</span></td></tr>
+<tr><td>Participante 2</td><td>44%</td><td><span class="tag no">✗ Errada</span></td></tr>
+<tr><td>Participante 3</td><td>44%</td><td><span class="tag">Sem resposta</span></td></tr></table></div></div></div>
+</section>
+
+<section class="s" id="s33" data-sc="Cenário 3 · Helena" data-t="Exportar relatório" data-n="Relatório em tabelas estruturadas (leitor de tela e impressão limpa).|Opção de incluir a paleta acessível escolhida.|Mostra com clareza o que é gratuito e o que é pago, antes do clique.|A exportação não foi exercitada no TP1: tratada como hipótese de design.">
+<div class="app"><div class="top"><button class="pb sm" aria-label="Voltar" data-go="s31">←</button><b>Revisão de Física – Cinemática</b><span class="sp"></span><span class="tb"><button data-go="s31">Resumo</button><button data-go="s32">Participantes</button></span><span class="sp"></span><button class="pb sm dk">↓ Exportar relatório</button></div>
+<div class="mod"><div class="mv"><svg viewBox="0 0 100 100" width="84" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="4" d="M10 90V60h18v30M38 90V40h18v50M66 90V20h18v70"/></svg></div>
+<div class="bd"><h3 style="font-weight:300;font-size:1.4rem;margin:0 0 6px">Exportar relatório</h3>
+<label class="rd"><input type="radio" name="fm" checked> PDF com tabelas <span class="tag ok">Gratuito</span></label>
+<label class="rd"><input type="radio" name="fm"> CSV <span class="tag ok">Gratuito</span></label>
+<label class="rd"><input type="radio" name="fm" disabled> Planilha (.xlsx) <span class="tag no">Paga</span></label>
+<label class="rd"><input type="checkbox" checked> Incluir paleta acessível</label>
+<div class="row"><button class="pb bl" id="dl">Baixar relatório</button><button class="pb" data-go="s11">Voltar ao início</button></div>
+<p class="mu" id="msg" role="status"></p></div></div></div>
+</section>
+
+</div>
+<aside><h2 id="at"></h2><p class="sc" id="as"></p><p class="mu">O que muda aqui:</p><ul id="an"></ul></aside>
+</main>
+<script>
+const S=[...document.querySelectorAll('.s')],nav=document.getElementById('nav');
+S.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+s.dataset.t;b.onclick=()=>go(s.id);b.dataset.id=s.id;nav.appendChild(b)});
+function go(id){if(!document.getElementById(id))id='s11';S.forEach(s=>s.classList.toggle('on',s.id===id));const s=document.getElementById(id);
+document.getElementById('at').textContent=s.dataset.t;document.getElementById('as').textContent=s.dataset.sc;
+document.getElementById('an').innerHTML=s.dataset.n.split('|').map(t=>'<li>'+t+'</li>').join('');
+nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.id===id));
+if(location.hash!=='#'+id)location.hash=id}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
+document.getElementById('dl').onclick=()=>{document.getElementById('msg').textContent='Relatório gerado: tabelas e paleta acessível incluídas. (Demonstração, sem download real.)'};
+window.addEventListener('hashchange',()=>go(location.hash.slice(1)));
+go(location.hash.slice(1)||'s11');
+</script>
+</body>
+</html>
